@@ -1,0 +1,24 @@
+{% extends 'menu.html' %}
+
+{% block contenido %}
+<nav class="barra_nav">
+    <a href="/proyecto/mostrar_proyectos">
+        <div class="btn-nav color_nav-1">
+            <span class="material-icons-sharp">menu_book</span>
+            <h3>Mostrar Proyectos</h3>
+        </div>
+    </a>
+    <a href="/proyecto/reg_proyecto">
+        <div class="btn-nav color_nav-1">
+            <span class="material-icons-sharp">add</span>
+            <h3>Registrar Proyecto</h3>
+        </div>
+    </a>
+
+</nav>
+
+<section class="contenedor-modulo">
+    {% block contenedor_forms %}
+    {% endblock %}
+</section>
+{% endblock %}

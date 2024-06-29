@@ -1,0 +1,158 @@
+{% extends 'stock.html' %}
+
+{% block contenedor_forms %}
+<h1>Registrar Salida Transporte</h1>
+
+<div  class="form-principal form-grid-2">
+    <div class="tabla-contenedor sin-sombra-padding tabla-corta" style="border-radius: 0;">
+        <h2>Seleccionar transporte</h2>
+        <table id="tb_transportes" class="tabla-corta">
+            <thead>
+                <tr>
+                    <th>Id</th>
+                    <th>Proyecto</th>
+                    <th>Fecha_salida</th>
+                    <th>Operacion</th>
+                </tr>
+            </thead>
+            <tbody></tbody>
+        </table>
+    </div>
+
+    <div class="tabla-contenedor sin-sombra-padding tabla-corta" style="border-radius: 0;">
+        <h2>Detalle transporte</h2>
+        <table id="tb_detalle_transporte" class="tabla-corta">
+            <thead>
+                <tr>
+                    <th>Deposito</th>
+                    <th>Material</th>
+                    <th>Cantidad_material</th>
+                </tr>
+            </thead>
+            <tbody></tbody>
+        </table>
+    </div>
+
+    <form id="form_salida_transporte" class="form-principal form-grid-2 grid-colum-2" style="gap: 0;">
+        <div> 
+            <div>
+                <label for="observacion">Id_transporte:</label><br>
+                <input type="number" name="id_transporte" id="id_transporte" readonly>
+            </div>
+            <div>
+                <label for="observacion">Observacion:</label><br>
+                <input type="text" name="observacion" id="observacion">
+            </div>
+        </div>
+        <div>
+            <div>
+                <label for="placa_vehiculo">Vehiculo:</label>
+                <select name="placa_vehiculo" id="placa_vehiculo">
+                    {% for datos in select_vehiculos[1] %}
+                        <option value="{{ datos.id }}">{{ datos.nombre }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+            <div>
+                <label for="placa_vehiculo">Chofer:</label>
+                <select name="id_chofer" id="id_chofer">
+                    {% for datos in select_choferes[1] %}
+                        <option value="{{ datos.id }}">{{ datos.nombre }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+        </div>
+    
+        <div class="form-contenedor-btns grid-colum-2">
+            <a href="/stock/reg_salida_transporte" class="btn-form-close">Cancelar</a>
+            <button type="submit" class="btn-form">Confirmar</button>
+        </div>
+    </form>
+</div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', (event) => {
+        const datos_transportes = {{  tb_transportes | tojson}};
+        cargar_tabla_stock(datos_transportes);
+    });
+
+    function cargar_tabla_stock(resultado) {
+        const tabla = document.querySelector('#tb_transportes tbody');
+        if (resultado[0] == false) {
+            // Cuando no hay datos
+            console.log(resultado[1]);
+        } else {
+            resultado = resultado[1];
+            tabla.innerHTML = '';  // Vaciar la tabla
+            resultado.forEach(data => {
+                const tr = document.createElement('tr');
+                tr.innerHTML = `
+                    <td>${data.id}</td>
+                    <td>${data.proyecto}</td>
+                    <td>${data.fecha_salida}</td>
+                    <td>
+                        <button type="button" class="btn-editar" 
+                        onclick="seleccion_transporte(${JSON.stringify(data).replace(/"/g, '&quot;')})">seleccionar</button>
+                    </td>`;
+                tabla.appendChild(tr);
+            });
+        }
+    }
+
+    function seleccion_transporte(datos){
+        document.getElementById('id_transporte').value = datos.id;
+        id_transporte =  datos.id;
+
+        const url = `/transporte/obtener_detalles_transporte/${id_transporte}`;
+        fetch(url)
+        .then(response => response.json())
+        .then(resultado => {
+            if (resultado[0] == false) {
+                // Cuando no hay datos
+                console.log(resultado[1]);
+            } else {
+                const tabla = document.querySelector('#tb_detalle_transporte tbody');
+                resultado = resultado[1];
+                tabla.innerHTML = '';  // Vaciar la tabla
+                resultado.forEach(data => {
+                    const tr = document.createElement('tr');
+                    tr.innerHTML = `
+                        <td>${data.deposito}</td>
+                        <td>${data.material}</td>
+                        <td>${data.cantidad_material}</td>
+                        `;
+                    tabla.appendChild(tr);
+                });
+            }
+        });
+    }
+
+    document.getElementById('form_salida_transporte').addEventListener('submit', function(event) {
+        event.preventDefault();
+        const formData = {
+            id_transporte: document.getElementById('id_transporte').value,
+            id_chofer: document.getElementById('id_chofer').value,
+            placa_vehiculo: document.getElementById('placa_vehiculo').value,
+            observacion: document.getElementById('observacion').value,
+            paso: 2
+        };
+    
+        fetch('/stock/reg_salida_transporte', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(formData)
+        })
+        .then(response => response.json())
+        .then(respuesta => {
+            if (respuesta.exito) {
+                crearMensaje(respuesta.titulo, respuesta.mensaje, respuesta.redireccion);
+            } else {
+                crearMensaje(respuesta.titulo, respuesta.mensaje);
+            }
+        })
+    });
+</script>
+
+{% endblock %}

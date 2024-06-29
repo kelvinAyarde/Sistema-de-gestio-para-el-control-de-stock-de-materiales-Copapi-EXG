@@ -1,0 +1,63 @@
+{% extends 'base_templates.html' %}
+
+{% block titulo %}Login{% endblock %}
+
+{% block css %}
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/login.css') }}">
+{% endblock %}
+
+{% block contenido_body %}
+    <div class="cont-login">
+        <section class="parte-izquierda">
+            <img class="logo-empresa" src="{{ url_for('static', filename='imgs/logo.jpg') }}" alt=""> 
+        </section>
+        <section class="parte-derecha">
+            <div class="form-login">
+                <form id="autentificar_usu">
+                    <h2>Iniciar Sesión</h2>
+                    <div class="input-box">
+                        <input type="text" id="usuario" autocomplete="off" required>
+                        <label>Usuario</label>
+                    </div>
+                    <div class="input-box">
+                        <input type="password" id="password" autocomplete="off" required>
+                        <label>Contraseña</label>
+                    </div>
+                    <button class="btn">Ingresar</button>
+                </form>
+            </div>
+        </section>
+    </div>
+{% endblock %}
+
+{% block js %}
+
+<script>
+    
+    document.getElementById('autentificar_usu').addEventListener('submit', function(event) {
+        event.preventDefault();
+        var formData = {
+            usuario: document.getElementById('usuario').value,
+            password: document.getElementById('password').value
+        };
+
+        fetch('/login', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(formData)
+        })
+        .then(response => response.json())
+        .then(respuesta => {
+            if (respuesta.exito) {
+                crearMensaje(respuesta.titulo, respuesta.mensaje, respuesta.redireccion);
+            } else {
+                crearMensaje(respuesta.titulo, respuesta.mensaje);
+            }
+        })
+        //.catch(error => console.error('Error:', error));
+    });
+</script>
+
+{% endblock %}

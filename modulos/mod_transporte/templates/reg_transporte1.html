@@ -1,0 +1,75 @@
+{% extends 'transporte.html' %}
+
+{% block contenedor_forms %}
+<h1>Registrar Transporte</h1>
+<div class="tabla-contenedor sin-sombra-padding tabla-mediana">
+    <h2>Seleccionar Proyecto</h2>
+    <input type="search" class="input-busqueda" id="buscar_proyecto" placeholder="Buscar.." />
+    <table id="tb_proyectos">
+        <thead>
+            <tr>
+                <th>Id_proyecto</th>
+                <th>Proyecto</th>
+                <th>Fecha_inicio</th>
+                <th>Estado</th>
+                <th>Barrio</th>
+                <th>Operacion</th>
+            </tr>
+        </thead>
+        <tbody></tbody>
+    </table>
+</div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', (event) => {
+        const datos_proyectos = {{ tb_proyectos | tojson}};
+        cargar_tabla_proyecto(datos_proyectos);
+    });
+
+    document.getElementById('buscar_proyecto').addEventListener('input', function () {
+        let textoBusqueda = this.value.toLowerCase();
+        BuscarEnTabla('#tb_proyectos', textoBusqueda);
+    });
+
+
+    function seleccion_proyecto(datos) {       
+        const formData = {
+            id_proyecto: datos.id_proyecto,
+            paso: 2
+        };
+        
+        const queryParams = new URLSearchParams(formData).toString();
+        const url = `/transporte/reg_transporte?${queryParams}`;
+        window.location.href = url;
+    }
+
+    function cargar_tabla_proyecto(resultado) {
+        const tabla = document.querySelector('#tb_proyectos tbody');
+        if (resultado[0] == false) {
+            // Cuando no hay datos
+            console.log(resultado[1]);
+        } else {
+            resultado = resultado[1];
+            tabla.innerHTML = '';  // Vaciar la tabla
+            resultado.forEach(data => {
+                const tr = document.createElement('tr');
+                tr.innerHTML = `
+                    <td>${data.id_proyecto}</td>
+                    <td>${data.nombre}</td>
+                    <td>${data.fecha_inicio}</td>
+                    <td class="${data.estado === 'A' ? 'Activo' : ''}">
+                        ${data.estado === 'A' ? 'Activo' : ''}
+                    </td>
+                    <td>${data.barrio}</td>
+                    <td>
+                        <button type="button" class="btn-editar" 
+                        onclick="seleccion_proyecto(${JSON.stringify(data).replace(/"/g, '&quot;')})">seleccionar</button>
+                    </td>`;
+                tabla.appendChild(tr);
+            });
+        }
+    }
+
+</script>
+
+{% endblock %}

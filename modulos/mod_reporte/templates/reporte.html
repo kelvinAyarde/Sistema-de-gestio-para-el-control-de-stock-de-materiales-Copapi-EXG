@@ -1,0 +1,30 @@
+{% extends 'menu.html' %}
+
+{% block contenido %}
+<nav class="barra_nav">
+    <a href="/reporte/materiales_ingresados">
+        <div class="btn-nav color_nav-1">
+            <span class="material-icons-sharp">bar_chart</span>
+            <h3>Stock ingresos</h3>
+        </div>
+    </a>
+    <a href="/reporte/materiales_enviados">
+        <div class="btn-nav color_nav-1">
+            <span class="material-icons-sharp">bar_chart</span>
+            <h3>Materiales Enviados</h3>
+        </div>
+    </a>
+    <a href="/reporte/reporte_stock">
+        <div class="btn-nav color_nav-1">
+            <span class="material-icons-sharp">bar_chart</span>
+            <h3>Reporte Stock</h3>
+        </div>
+    </a>
+
+</nav>
+
+<section class="contenedor-modulo">
+    {% block contenedor_forms %}
+    {% endblock %}
+</section>
+{% endblock %}

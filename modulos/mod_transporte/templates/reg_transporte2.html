@@ -1,0 +1,169 @@
+{% extends 'transporte.html' %}
+
+{% block contenedor_forms %}
+<h1>Registrar Transporte</h1>
+<h2>Paso 2: Seleccionar materiales y fecha programada</h2>
+
+<div  class="form-principal form-grid-2">
+    <div class="tabla-contenedor sin-sombra-padding tabla-corta">
+        <input type="search" class="input-busqueda" id="buscar_stock" placeholder="Buscar.." />
+        <table id="tb_stock" class="tabla-corta">
+            <thead>
+                <tr>
+                    <th>Material</th>
+                    <th>Tipo_material</th>
+                    <th>Deposito</th>
+                    <th>Cantidad_material</th>
+                    <th>Operacion</th>
+                </tr>
+            </thead>
+            <tbody></tbody>
+        </table>
+    </div>
+    <div class="tabla-contenedor sin-sombra-padding tabla-corta">
+        <h2>Materiales Seleccionados</h2>
+        <table id="tb_carrito" class="tabla-corta">
+            <thead>
+                <tr>
+                    <th>Material</th>
+                    <th>Tipo_material</th>
+                    <th>Deposito</th>
+                    <th>Cantidad_material</th>
+                </tr>
+            </thead>
+            <tbody>
+                <!-- Los materiales seleccionados se mostrarán aquí -->
+            </tbody>
+        </table>
+    </div>
+
+    <form id="form_reg_transporte" class="grid-colum-2">
+        <label for="fecha_salida">Fecha de Salida:</label>
+        <input type="date" id="fecha_salida" name="fecha_salida" required /> <br>
+        <input type="number" id="id_proyecto" name="id_proyecto" value="{{ id_proyecto }}" required hidden /><br>
+    
+        <div class="form-contenedor-btns">
+            <a href="/transporte/reg_transporte" class="btn-form-close">Cancelar</a>
+            <button type="submit" class="btn-form">Confirmar</button>
+        </div>
+    </form>
+</div>
+<script>
+    document.addEventListener('DOMContentLoaded', (event) => {
+        const datos_stock = {{ tb_stock | tojson}};
+        cargar_tabla_stock(datos_stock);
+    });
+
+    document.getElementById('buscar_stock').addEventListener('input', function () {
+        let textoBusqueda = this.value.toLowerCase();
+        BuscarEnTabla('#tb_stock', textoBusqueda);
+    });
+
+    function cargar_tabla_stock(resultado) {
+        const tabla = document.querySelector('#tb_stock tbody');
+        if (resultado[0] == false) {
+            // Cuando no hay datos
+            console.log(resultado[1]);
+        } else {
+            resultado = resultado[1];
+            tabla.innerHTML = '';  // Vaciar la tabla
+            resultado.forEach(data => {
+                const tr = document.createElement('tr');
+                tr.innerHTML = `
+                    <td>${data.material}</td>
+                    <td>${data.tipo_material}</td>
+                    <td>${data.deposito}</td>
+                    <td>${data.cantidad_material}</td>
+                    <td>
+                        <button type="button" class="btn-editar" 
+                        onclick="addMaterial(${JSON.stringify(data).replace(/"/g, '&quot;')})">seleccionar</button>
+                    </td>`;
+                tabla.appendChild(tr);
+            });
+        }
+    }
+
+</script>
+
+<script>
+    let carrito = [];
+
+    // Función para agregar material al carrito
+    function addMaterial(material) {
+        const index = carrito.findIndex(item => 
+            item.id_material === material.id_material && item.id_deposito === material.id_deposito);
+        if (index === -1) {
+            // Si el material no está en el carrito, agregarlo con cantidad 1
+            material.cantidad_material = 1;
+            carrito.push(material);
+        } else {
+            // Si el material ya está en el carrito, incrementar la cantidad
+            carrito[index].cantidad_material++;
+        }
+        actualizarCarrito();
+    }
+    
+    // Función para actualizar la cantidad de material en el carrito
+    function updateQuantity(id_material, id_deposito, cantidad) {
+        const index = carrito.findIndex(item => 
+            item.id_material === id_material && item.id_deposito === id_deposito);
+        if (index !== -1) {
+            const inputCantidad = document.querySelector(`#cantidad_mat_${id_material}_${id_deposito}`);
+            carrito[index].cantidad_material = parseInt(inputCantidad.value);
+            if (carrito[index].cantidad_material <= 0) {
+                carrito.splice(index, 1); // Eliminar el material si la cantidad es cero o menos
+            }
+        }
+        actualizarCarrito();
+    }
+    
+    // Función para actualizar la tabla del carrito
+    function actualizarCarrito() {
+        const tbody = document.querySelector('#tb_carrito tbody');
+        tbody.innerHTML = ''; // Limpiar la tabla
+        carrito.forEach(material => {
+            const tr = document.createElement('tr');
+            tr.innerHTML = `
+                <td>${material.material}</td>
+                <td>${material.tipo_material}</td>
+                <td>${material.deposito}</td>
+                <td>
+                    <input type="number" name="cantidad_mat" id="cantidad_mat_${material.id_material}_${material.id_deposito}" value="${material.cantidad_material}" onchange="updateQuantity(${material.id_material}, ${material.id_deposito}, this.value)">
+                </td>
+            `;
+            tbody.appendChild(tr);
+        });
+    }
+
+document.getElementById('form_reg_transporte').addEventListener('submit', function(event) {
+    event.preventDefault();
+    const lista_materiales = carrito.map(material => ({
+        id_material: material.id_material,
+        id_deposito: material.id_deposito,
+        cantidad_material: material.cantidad_material
+    }));
+
+    var formData = {
+        id_proyecto: document.getElementById('id_proyecto').value,
+        fecha_salida: document.getElementById('fecha_salida').value,
+        lista_materiales: lista_materiales
+    };
+
+    fetch('/transporte/reg_transporte', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(formData)
+    })
+    .then(response => response.json())
+    .then(respuesta => {
+        if (respuesta.exito) {
+            crearMensaje(respuesta.titulo, respuesta.mensaje, respuesta.redireccion);
+        } else {
+            crearMensaje(respuesta.titulo, respuesta.mensaje);
+        }
+    })
+});
+</script>
+{% endblock %}

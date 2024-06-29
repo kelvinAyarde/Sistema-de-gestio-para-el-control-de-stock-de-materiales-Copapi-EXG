@@ -1,0 +1,69 @@
+{% extends 'proyecto.html' %} {% block contenedor_forms %}
+<h1> Proyectos </h1>
+
+<input type="search" class="input-busqueda" id="buscar_proyecto" placeholder="Buscar.." />
+<div class="tabla-contenedor tabla-mediana">
+    <table id="tb_proyectos">
+        <thead>
+            <tr>
+                <th>Id</th>
+                <th>Proyecto</th>
+                <th>Fecha_inicio</th>
+                <th>Fecha_fin</th>
+                <th>Estado</th>
+                <th>Barrio</th>
+                <th>Servicios</th>
+                <th>Operacion</th>
+            </tr>
+        </thead>
+        <tbody></tbody>
+    </table>
+</div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', (event) => {
+            const datos_proyectos = {{ tabla_proyectos | tojson }};
+            cargar_tabla_proyecto(datos_proyectos);
+
+        });
+    document.getElementById('buscar_proyecto').addEventListener('input', function() {
+        let textoBusqueda = this.value.toLowerCase();
+        BuscarEnTabla('#tb_proyectos', textoBusqueda);
+    });
+
+    function modificar_proyecto(datos) {
+        const datosUrl = new URLSearchParams(datos).toString();
+        window.location.href = `/proyecto/modificar_proyecto?${datosUrl}`;
+    }
+
+    function cargar_tabla_proyecto(resultado) {        
+        const tabla = document.querySelector('#tb_proyectos tbody');
+        if (resultado[0] == false) {
+            // Cuando no hay datos
+            console.log(resultado[1]);
+        } else {
+            resultado = resultado[1];
+            tabla.innerHTML = '';  // Vaciar la tabla
+            resultado.forEach(data => {
+                const tr = document.createElement('tr');
+                tr.innerHTML = `
+                    <td>${data.id}</td>
+                    <td>${data.nombre}</td>
+                    <td>${data.fecha_inicio}</td>
+                    <td>${data.fecha_fin}</td>
+                    <td class="${data.estado === 'A' ? 'Activo' : data.estado === 'C' ? 'Cancelado' : 'Finalizado'}">
+                        ${data.estado === 'A' ? 'Activo' : data.estado === 'C' ? 'Cancelado' : 'Finalizado' }
+                    </td>
+                    <td>${data.barrio}</td>
+                    <td>${data.servicios}</td>
+                    <td>${data.estado === 'A' ?
+                        `<button type="button" class="btn-editar" onclick="modificar_proyecto(${JSON.stringify(data).replace(/"/g, '&quot;')})">modificar</button>`
+                        : ''}
+                    </td>`;
+                tabla.appendChild(tr);
+            });
+        }
+    }
+
+</script>
+{% endblock %}

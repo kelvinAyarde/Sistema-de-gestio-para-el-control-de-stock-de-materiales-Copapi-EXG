@@ -1,0 +1,241 @@
+*{
+  margin: 0;
+  padding: 0;
+  font-family: 'Segoe UI';
+}  
+  
+  /*-------------- seccion de POP-UP --------------------------*/
+  .cont_mensaje {
+      position: fixed;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      z-index: 9999;
+    }
+    
+    .popup {
+      background-color: white;
+      padding: 20px;
+      border: 1px solid #ccc;
+      border-radius: 5px;
+      box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
+      display: flex;
+      align-items: center;
+      flex-direction: column;
+    }
+    
+    .popup-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background-color: rgba(0, 0, 0, 0.5);
+      z-index: 1000;
+      display: none;
+    }
+    
+    .popup.error h2, .popup.Error h2{
+      color: red;
+    }
+    
+    .popup.exito h2, .popup.Exito h2{
+      color: green;
+    }
+    .popup p{
+      color: black;
+      font-weight: bold;
+    }
+    .cont_mensaje .close-btn{
+      background-color: #03a9f4;
+      color: #fff;
+      border: none;
+      padding: 8px 12px;
+      border-radius: 5px;
+      cursor: pointer;
+      margin-top: 10px;
+    }
+/*
+.cont_pantalla_emergente{
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  z-index: 9000;
+  width: 100%;
+}*/
+/*-----------------------------------------------------------------*/
+.close-btn{
+  background-color: red;
+  color: aliceblue;
+  padding: 5px;
+  border-radius: var(--border-radius-1);
+}
+.registrar-btn{
+  background-color: green;
+  color: aliceblue;
+  padding: 5px;
+  border-radius: var(--border-radius-1);
+}
+/*------------------------------------------------------------------*/
+main form input[type="text"],main form input[type="email"],
+main form input[type="tel"], main form textarea, main form input[type="number"]{
+  padding: 6px;
+  border-radius: var(--border-radius-1);
+  color: black;
+  font-weight: bold;
+  border-radius: var(--border-radius-2);
+  border: 2px inset var(--color-primary);
+  border-color: aliceblue;
+}
+
+main form select{
+  padding: 6px;
+  border-radius: var(--border-radius-1);
+}
+
+.Activo, .Disponible, .Verde{
+  color: #1B9C85;
+}
+.Inactivo, .Ocupado, .Rojo, .Cancelado{
+  color: #FF0060;
+}
+.Espera, .Naranja, .Finalizado{
+  color: #F7D060;
+}
+.Finalizado{
+  color: #6c65f2;
+}
+/*-------------------------------------------------------*/
+/*
+.parte-top{
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+.decorado_cubrir{
+    background-color: var(--color-white);
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    margin-bottom: 0.7rem;
+    padding: 1.4rem var(--card-padding);
+    border-radius: var(--border-radius-2);
+    cursor: pointer;
+    transition: all 0.3s ease;
+    box-shadow: var(--box-shadow);
+}
+.color_decorado_cubrir_1{
+  border: 2px dashed var(--color-primary);
+}
+.color_decorado_cubrir_2{
+  border: 2px dashed orange;
+}
+.color_decorado_cubrir_3{
+  border: 2px dashed #1B9C85;
+}
+.color_decorado_cubrir_1:hover{
+  background-color: var(--color-primary);
+  color: white;
+}
+.color_decorado_cubrir_2:hover{
+  background-color: orange;
+  color: white;
+}
+.color_decorado_cubrir_3:hover{
+  background-color: #1B9C85;
+  color: white;
+}
+
+.cont_tabla{
+  margin-top: 1.3rem;
+
+  max-height: 60vh;
+  overflow-y: auto;
+}
+
+
+.cont_tabla h2 {
+  margin-bottom: 0.8rem;
+}
+
+.cont_tabla table{
+    background-color: var(--color-white);
+    width: 100%;
+    padding: var(--card-padding);
+    text-align: center;
+    box-shadow: var(--box-shadow);
+    border-radius: var(--card-border-radius);
+    transition: all 0.3s ease;
+}
+
+.cont_pantalla_emergente main{
+  background-color: var(--color-white);
+  padding: var(--card-padding);
+  text-align: center;
+  box-shadow: var(--box-shadow);
+  border-radius: var(--card-border-radius);
+  transition: all 0.3s ease;
+  width: 80%;
+  margin: auto;
+}
+
+.btn_editar, .btn_buscar{
+  background-color: var(--color-primary);
+  color: aliceblue;
+  padding: 5px;
+  border-radius: var(--border-radius-1);
+  cursor: pointer;
+}
+
+.input_busqueda{
+    background-color: var(--color-white);
+    padding: 7px;
+    border-radius: var(--border-radius-2);
+    border: 2px inset var(--color-primary);
+    border-color: aliceblue;
+    transition: all 0.3s ease;
+    margin: 20px 0;
+    color: var(--color-dark-variant);
+}
+.ticket h1{
+  text-align: center;
+}
+.cont_doble{
+  display: flex;
+  width: 100%;
+}
+.parte_izquierda{
+  width: 40%;
+}
+.parte_derecha{
+  width: 60%;
+  max-height: 60vh;
+  overflow-y: auto;
+}
+.parte_derecha::-webkit-scrollbar {
+  display: none; 
+}
+*/
+
+/*-------------------------ESTILOS PARA CONTENER FORULARIOS-------------------*/
+/*.cont_form_2_secciones{
+  display: flex;
+  width: 100%;
+}
+.form_seccion{
+  width: 100%;
+}
+
+form p {
+  border-radius: var(--border-radius-2);
+  border: 2px inset var(--color-primary);
+  border-color: aliceblue;
+  padding: 5px;
+}*/
+
+
+
+
+
+

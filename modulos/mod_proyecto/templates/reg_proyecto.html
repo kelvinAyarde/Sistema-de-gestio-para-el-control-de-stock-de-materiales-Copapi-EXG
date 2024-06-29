@@ -1,0 +1,63 @@
+{% extends 'proyecto.html' %}
+
+{% block contenedor_forms %}
+
+    <form id="form_reg_proyecto" class="form-principal">
+        <h1>Registro Proyecto</h1>
+        <label for="nombre">Nombre del Proyecto:</label>
+        <input type="text" id="nombre" name="nombre" required><br>
+        
+        <label for="fecha_inicio">Fecha de Inicio:</label>
+        <input type="date" id="fecha_inicio" name="fecha_inicio" required><br>
+
+        <label for="id_barrio">Barrio:</label>
+        <select id="id_barrio" name="id_barrio" required>
+            <option value="">seleccione</option>
+        </select> <br>
+        
+        <label for="servicios">Servicios:</label>
+        <div id="servicios" class="checkbox-form"></div>
+
+        <button type="submit" class="btn-form">Confirmar</button>
+    </form>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', (event) => {
+            const datos_barrios = {{ dato_barrios | tojson }};
+            htmlSelect(datos_barrios,'id_barrio');
+
+            const dato_servicios = {{ dato_servicios | tojson }};
+            htmlCheckbox(dato_servicios, 'servicios', 'id_servicios');
+        });
+
+        document.getElementById('form_reg_proyecto').addEventListener('submit', function(event) {
+            event.preventDefault();
+            const servicios = document.querySelectorAll('input[name="id_servicios"]:checked');
+            const serviciosSeleccionados = Array.from(servicios).map(cb => cb.value);
+            var formData = {
+                nombre: document.getElementById('nombre').value,
+                fecha_inicio: document.getElementById('fecha_inicio').value,
+                id_barrio: document.getElementById('id_barrio').value,
+                id_servicios: serviciosSeleccionados
+            };
+    
+            fetch('/proyecto/reg_proyecto', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(formData)
+            })
+            .then(response => response.json())
+            .then(respuesta => {
+                if (respuesta.exito) {
+                    crearMensaje(respuesta.titulo, respuesta.mensaje, respuesta.redireccion);
+                } else {
+                    crearMensaje(respuesta.titulo, respuesta.mensaje);
+                }
+            })
+        });
+
+    </script>
+
+{% endblock %}

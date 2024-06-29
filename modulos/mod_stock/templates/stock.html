@@ -1,0 +1,18 @@
+{% extends 'menu.html' %}
+
+{% block contenido %}
+<nav class="barra_nav">
+    <a href="/stock/reg_salida_transporte">
+        <div class="btn-nav color_nav-1">
+            <span class="material-icons-sharp">add</span>
+            <h3>Registrar Salida Transporte</h3>
+        </div>
+    </a>
+
+</nav>
+
+<section class="contenedor-modulo">
+    {% block contenedor_forms %}
+    {% endblock %}
+</section>
+{% endblock %}

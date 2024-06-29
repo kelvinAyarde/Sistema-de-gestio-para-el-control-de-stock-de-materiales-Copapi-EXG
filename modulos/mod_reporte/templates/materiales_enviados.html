@@ -1,0 +1,91 @@
+{% extends 'reporte.html' %}
+
+{% block contenedor_forms %}
+
+<h1>Reporte de Materiales Enviados por Proyecto</h1>
+<div class="form-principal form-grid-2-auto">
+    <form id="form_materiales_enviados" class="form-principal">
+
+        <label for="fecha_inicio">Fecha de inicio:</label>
+        <input type="date" id="fecha_inicio" name="fecha_inicio" required>
+
+        <label for="fecha_fin">Fecha de fin:</label>
+        <input type="date" id="fecha_fin" name="fecha_fin" required>
+
+        <label for="estado_transporte">Estado de transporte:</label>
+        <select id="estado_transporte" name="estado_transporte">
+            <option value="">Todos</option>
+            <option value="E">Entregado</option>
+            <option value="A">Activo</option>
+            <option value="C">Cancelado</option>
+        </select>
+
+        <label for="minimo_material_total">Mínimo material enviado:</label>
+        <input type="number" id="minimo_material_total" name="minimo_material_total" min="0" value="0" required>
+
+        <div class="form-contenedor-btns">
+            <button type="submit" class="btn-form">Generar Reporte</button>
+        </div>
+    </form>
+
+    <div class="tabla-contenedor sin-sombra-padding tabla-mediana" style="border-radius: 0;">
+        <table id="tb_reporte" class="tabla-corta">
+            <thead>
+                <tr>
+                    <th>proyecto</th>
+                    <th>salida_programada</th>
+                    <th>registro_salida</th>
+                    <th>estado_transpore</th>
+                    <th>tipo_material</th>
+                    <th>material</th>
+                    <th>total_material</th>
+                </tr>
+            </thead>
+            <tbody></tbody>
+        </table>
+    </div>
+</div>
+
+<script>
+    document.getElementById('form_materiales_enviados').addEventListener('submit', function(event) {
+        event.preventDefault();
+        const formData = {
+            fecha_inicio: document.getElementById('fecha_inicio').value,
+            fecha_fin: document.getElementById('fecha_fin').value,
+            estado_transporte: document.getElementById('estado_transporte').value,
+            minimo_material_total: document.getElementById('minimo_material_total').value
+        };
+
+        fetch('/reporte/materiales_enviados', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(formData)
+        })
+        .then(response => response.json())
+        .then(respuesta => {
+            if (respuesta.exito) {
+                const tabla = document.querySelector('#tb_reporte tbody');
+                resultado = respuesta.contenido;
+                tabla.innerHTML = '';  // Vaciar la tabla
+                resultado.forEach(data => {
+                    const tr = document.createElement('tr');
+                    tr.innerHTML = `
+                        <td>${data.proyecto}</td>
+                        <td>${data.salida_programada}</td>
+                        <td>${data.registro_salida}</td>
+                        <td>${data.estado_transporte}</td>
+                        <td>${data.tipo_material}</td>
+                        <td>${data.material}</td>
+                        <td>${data.total_material}</td>
+                        `;
+                    tabla.appendChild(tr);
+                });
+            } else {
+                crearMensaje(respuesta.titulo, respuesta.mensaje);
+            }
+        })
+    });
+</script>
+{% endblock %}

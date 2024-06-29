@@ -1,0 +1,97 @@
+{% extends 'base_templates.html' %}
+
+{% block titulo %}Menu{% endblock %}
+
+{% block css %}
+
+<link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/base.css') }}">
+<link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/menu_mi_version.css') }}">
+
+{% endblock %}
+
+{% block contenido_body %}
+<div class="cont_pantalla_emergente" id="cont_pantalla_emergente">
+    {% block contenido_pantalla_emergente %}
+    {% endblock %}
+</div>
+
+<div class="container">
+    <!-- Sidebar Section -->
+    <aside>
+        <div class="toggle">
+            <div class="logo">
+                <img src="../static/imgs/logo.jpg">
+                <h2><span class="danger">COPAPI</span></h2>
+            </div>
+            <div class="close" id="close-btn">
+                <span class="material-icons-sharp">close</span>
+            </div>
+        </div>
+
+        <div class="sidebar">
+            <a href="/proyecto">
+                <span class="material-icons-sharp">work_outline</span>
+                <h3>Proyectos</h3>
+            </a>
+            <a href="/transporte">
+                <span class="material-icons-sharp">local_shipping</span>
+                <h3>Transporte</h3>
+            </a>
+            <a href="/stock">
+                <span class="material-icons-sharp">pie_chart</span>
+                <h3>Stock</h3>
+            </a>
+            <a href="/reporte">
+                <span class="material-icons-sharp">bar_chart</span>
+                <h3>Reportes</h3>
+            </a>
+
+            <a href="/cerrar_sesion" id="cerrar_sesion">
+                <span class="material-icons-sharp">logout</span>
+                <h3>Salir</h3>
+            </a>
+        </div>
+    </aside>
+    <!-- End of Sidebar Section -->
+
+    <!-- Main Content -->
+    <main>
+        <!-- Right Section -->
+        <div class="right-section">
+            <div class="nav">
+                <button id="menu-btn">
+                    <span class="material-icons-sharp">menu</span>
+                </button>
+                <div class="dark-mode">
+                    <span class="material-icons-sharp">light_mode</span>
+                    <span class="material-icons-sharp">dark_mode</span>
+                </div>
+
+                <div class="profile">
+                    <div class="info">
+                        <p>{{ session['datos_usuario'].nombres }}</p>
+                        <small class="text-muted">{{ session['datos_usuario'].rol }}</small>
+                    </div>
+                    <div class="profile-photo">
+                        <img src="../static/imgs/logo.jpg">
+                    </div>
+                </div>
+
+            </div>
+            <!-- End of Nav -->
+        </div>
+
+        <div class="contenido_principal">
+            {% block contenido %}
+            <!-- Contenido de cada página se insertará aquí -->
+            {% endblock %}
+        </div>
+    </main>
+    <!-- End of Main Content -->
+</div>
+{% endblock %}
+
+{% block js %}
+<script src="{{ url_for('static', filename='js/base.js') }}"></script>
+<script src="{{ url_for('static', filename='js/utils_forms.js') }}"></script>
+{% endblock %}

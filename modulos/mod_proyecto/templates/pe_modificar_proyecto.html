@@ -1,0 +1,52 @@
+{% extends 'proyecto.html' %}
+
+{% block contenedor_forms %}
+
+    <form id="form_mod_proyecto" method="PUT" class="form-principal">
+        <h1>Modificar Proyecto</h1>
+        <label>Id del proyecto: {{ datos_proyecto.id }}</label>
+        <input type="number" value="{{ datos_proyecto.id }}" id="id_proyecto" name="id_proyecto" hidden><br>
+        <label for="nombre">Nombre del Proyecto:</label>
+        <input type="text" id="nombre" name="nombre" value="{{ datos_proyecto.nombre }}" required><br>
+        <label>Fecha_inicio: {{ datos_proyecto.fecha_inicio }}</label> <br>
+        <label>Estado:</label>
+        <select id="estado" name="estado" required>
+            <option value="{{ datos_proyecto.estado }}"> Activo </option>
+            <option value="C"> Cancelado </option>
+            <option value="F"> Finalizado </option>
+        </select><br>
+        <label>Barrio: {{ datos_proyecto.barrio }} </label> <br>
+        <label>Servicios: {{ datos_proyecto.servicios }}</label> <br>
+        <div class="form-contenedor-btns">
+            <a href="/proyecto/mostrar_proyectos" class="btn-form-close">Cancelar</a>
+            <button type="submit" class="btn-form">Confirmar</button>
+        </div>
+    </form>
+
+    <script>
+        document.getElementById('form_mod_proyecto').addEventListener('submit', function(event) {
+            event.preventDefault();
+            var formData = {
+                id_proyecto: document.getElementById('id_proyecto').value,
+                nombre: document.getElementById('nombre').value,
+                estado: document.getElementById('estado').value
+            };
+            fetch('/proyecto/modificar_proyecto', {
+                method: 'PUT',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(formData)
+            })
+            .then(response => response.json())
+            .then(respuesta => {
+                if (respuesta.exito) {
+                    crearMensaje(respuesta.titulo, respuesta.mensaje, respuesta.redireccion);
+                } else {
+                    crearMensaje(respuesta.titulo, respuesta.mensaje);
+                }
+            })
+        });
+    </script>
+
+{% endblock %}
